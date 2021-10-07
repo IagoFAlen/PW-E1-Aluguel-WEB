@@ -5,22 +5,20 @@
  */
 package br.edu.ifsul.dao;
 
-
 import br.edu.ifsul.converter.ConverterOrdem;
-import br.edu.ifsul.modelo.Locatario;
+import br.edu.ifsul.modelo.Permissao;
 import java.io.Serializable;
 import javax.ejb.Stateful;
 
 /**
  *
  * @author Iago Figueira
- */ 
-
+ */
 @Stateful
-public class LocatarioDAO<TIPO> extends DAOGenerico<Locatario> implements Serializable {
-    public LocatarioDAO(){
+public class PermissaoDAO<TIPO> extends DAOGenerico<Permissao> implements Serializable {
+    public PermissaoDAO(){
         super();
-        classePersistente = Locatario.class;
+        classePersistente = Permissao.class;
         listaOrdem.add(new Ordem("id", "ID", "="));
         listaOrdem.add(new Ordem("nome", "Nome", "like"));
         // definição da ordem atual
@@ -30,4 +28,5 @@ public class LocatarioDAO<TIPO> extends DAOGenerico<Locatario> implements Serial
         // criando uma lista de ordens do conversor
         converterOrdem.setListaOrdem(listaOrdem);
     }
+    
 }

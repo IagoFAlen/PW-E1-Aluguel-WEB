@@ -5,7 +5,9 @@
  */
 package br.edu.ifsul.controle;
 
+import br.edu.ifsul.dao.PessoaDAO;
 import br.edu.ifsul.dao.UnidadeCondominialDAO;
+import br.edu.ifsul.modelo.Pessoa;
 import br.edu.ifsul.modelo.UnidadeCondominial;
 import br.edu.ifsul.util.Util;
 import java.io.Serializable;
@@ -23,7 +25,9 @@ public class ControleUnidadeCondominial implements Serializable{
     @EJB
     private UnidadeCondominialDAO<UnidadeCondominial> dao;
     private UnidadeCondominial objeto;
-
+    @EJB
+    private PessoaDAO<Pessoa> daoPessoa;
+    
     
     public ControleUnidadeCondominial(){
         
@@ -91,6 +95,20 @@ public class ControleUnidadeCondominial implements Serializable{
         }catch (Exception e){
             Util.mensagemErro("Erro ao persistir objeto : " + Util.getMensagemErro(e));
         }
+    }
+
+    /**
+     * @return the daoPessoa
+     */
+    public PessoaDAO<Pessoa> getDaoPessoa() {
+        return daoPessoa;
+    }
+
+    /**
+     * @param daoPessoa the daoPessoa to set
+     */
+    public void setDaoPessoa(PessoaDAO<Pessoa> daoPessoa) {
+        this.daoPessoa = daoPessoa;
     }
     
 }

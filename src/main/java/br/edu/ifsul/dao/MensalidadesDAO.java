@@ -7,7 +7,7 @@ package br.edu.ifsul.dao;
 
 
 import br.edu.ifsul.converter.ConverterOrdem;
-import br.edu.ifsul.modelo.Locatario;
+import br.edu.ifsul.modelo.Mensalidades;
 import java.io.Serializable;
 import javax.ejb.Stateful;
 
@@ -17,12 +17,12 @@ import javax.ejb.Stateful;
  */ 
 
 @Stateful
-public class LocatarioDAO<TIPO> extends DAOGenerico<Locatario> implements Serializable {
-    public LocatarioDAO(){
+public class MensalidadesDAO<TIPO> extends DAOGenerico<Mensalidades> implements Serializable {
+    public MensalidadesDAO(){
         super();
-        classePersistente = Locatario.class;
+        classePersistente = MensalidadesDAO.class;
         listaOrdem.add(new Ordem("id", "ID", "="));
-        listaOrdem.add(new Ordem("nome", "Nome", "like"));
+        listaOrdem.add(new Ordem("valorPagamento", "ValorPagamento", "like"));
         // definição da ordem atual
         ordemAtual = listaOrdem.get(1); // vai pegar o segundo da lista de ordens
         // criando uma instância do conversor

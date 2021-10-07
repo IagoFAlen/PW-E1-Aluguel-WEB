@@ -5,6 +5,7 @@
  */
 package br.edu.ifsul.dao;
 
+import br.edu.ifsul.converter.ConverterOrdem;
 import br.edu.ifsul.modelo.Recurso;
 import java.io.Serializable;
 import javax.ejb.Stateful;
@@ -18,5 +19,14 @@ public class RecursoDAO<TIPO> extends DAOGenerico<Recurso> implements Serializab
     public RecursoDAO(){
         super();
         classePersistente = Recurso.class;
+        listaOrdem.add(new Ordem("id", "ID", "="));
+        listaOrdem.add(new Ordem("descricao", "Descricao", "like"));
+        // definição da ordem atual
+        ordemAtual = listaOrdem.get(1); // vai pegar o segundo da lista de ordens
+        // criando uma instância do conversor
+        converterOrdem = new ConverterOrdem();
+        // criando uma lista de ordens do conversor
+        converterOrdem.setListaOrdem(listaOrdem);
     }
+    
 }

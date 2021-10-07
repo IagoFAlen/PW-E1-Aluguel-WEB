@@ -7,7 +7,7 @@ package br.edu.ifsul.dao;
 
 
 import br.edu.ifsul.converter.ConverterOrdem;
-import br.edu.ifsul.modelo.Locatario;
+import br.edu.ifsul.modelo.Aluguel;
 import java.io.Serializable;
 import javax.ejb.Stateful;
 
@@ -17,17 +17,27 @@ import javax.ejb.Stateful;
  */ 
 
 @Stateful
-public class LocatarioDAO<TIPO> extends DAOGenerico<Locatario> implements Serializable {
-    public LocatarioDAO(){
+public class AluguelDAO<TIPO> extends DAOGenerico<Aluguel> implements Serializable {
+    public AluguelDAO(){
         super();
-        classePersistente = Locatario.class;
+        classePersistente = Aluguel.class;
         listaOrdem.add(new Ordem("id", "ID", "="));
-        listaOrdem.add(new Ordem("nome", "Nome", "like"));
+        listaOrdem.add(new Ordem("valor", "Valor", "like"));
         // definição da ordem atual
         ordemAtual = listaOrdem.get(1); // vai pegar o segundo da lista de ordens
         // criando uma instância do conversor
         converterOrdem = new ConverterOrdem();
         // criando uma lista de ordens do conversor
         converterOrdem.setListaOrdem(listaOrdem);
+    }
+    
+    @Override
+    public Aluguel localizar(Object id) throws Exception{
+        Aluguel objeto = em.find(Aluguel.class, id);
+        // Deve-se inicializar a coleção ou coleções de objeto para não
+        // dar um erro de lazy inicialization exception
+        objeto.getMensalidades().size();
+        
+        return objeto;
     }
 }

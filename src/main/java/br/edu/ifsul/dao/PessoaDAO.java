@@ -5,6 +5,7 @@
  */
 package br.edu.ifsul.dao;
 
+import br.edu.ifsul.converter.ConverterOrdem;
 import br.edu.ifsul.modelo.Pessoa;
 import java.io.Serializable;
 import javax.ejb.Stateful;
@@ -19,5 +20,14 @@ public class PessoaDAO<TIPO> extends DAOGenerico<Pessoa> implements Serializable
     public PessoaDAO(){
         super();
         classePersistente = Pessoa.class;
+        // definição da lista de ordenações
+        listaOrdem.add(new Ordem("id", "ID", "="));
+        listaOrdem.add(new Ordem("nome", "Nome", "like"));
+        // definição da ordem atual
+        ordemAtual = listaOrdem.get(1); // vai pegar o segundo da lista de ordens
+        // criando uma instância do conversor
+        converterOrdem = new ConverterOrdem();
+        // criando uma lista de ordens do conversor
+        converterOrdem.setListaOrdem(listaOrdem);
     }
 }

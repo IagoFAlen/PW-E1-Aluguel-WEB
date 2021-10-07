@@ -6,14 +6,21 @@
 package br.edu.ifsul.controle;
 
 import br.edu.ifsul.dao.CondominioDAO;
+import br.edu.ifsul.dao.PessoaDAO;
 import br.edu.ifsul.dao.RecursoDAO;
 import br.edu.ifsul.dao.UnidadeCondominialDAO;
 import br.edu.ifsul.modelo.Condominio;
+import br.edu.ifsul.modelo.Pessoa;
 import br.edu.ifsul.modelo.Recurso;
 import br.edu.ifsul.modelo.UnidadeCondominial;
 import br.edu.ifsul.util.Util;
+import br.edu.ifsul.util.UtilRelatorios;
 import java.io.Serializable;
+import java.util.HashMap;
 import javax.ejb.EJB;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -35,14 +42,49 @@ public class ControleCondominio implements Serializable{
     @EJB
     private UnidadeCondominialDAO<UnidadeCondominial> daoUnidadeCondominial;
     
+    @EJB
+    private PessoaDAO<Pessoa> daoPessoa;
+    private Pessoa pessoa;
+    
+    protected UnidadeCondominial unidadeCondominial;
+    protected Boolean novaUnidadeCondominial;
+    
+    private Boolean novo;
     
     public ControleCondominio(){
         
     }
     
+    public void imprimeCondominios(){
+        HashMap parametros = new HashMap();
+        UtilRelatorios.imprimeRelatorio("relatorioCondominio", parametros, dao.getListaTodos());
+    }
+    
+    public void novaUnidadeCondominial(){
+        novaUnidadeCondominial = true;
+        unidadeCondominial = new UnidadeCondominial();
+    }
+    
+    public void alterarUnidadeCondominial(int index){
+        unidadeCondominial = objeto.getUnidadescondominiais().get(index);
+        novaUnidadeCondominial = false;
+    }
+    
+    public void salvarUnidadeCondominial(){
+        if(novaUnidadeCondominial){
+            objeto.adicionarUnidadeCondominial(unidadeCondominial);
+        }
+        Util.mensagemInformacao("Unidade Condominial adicionada ou atualizada com sucesso");
+    }
+    
     public void removerRecurso(Recurso obj){
         objeto.getRecursos().remove(obj);
         Util.mensagemInformacao("Recurso removida com sucesso!");
+    }
+    
+    public void removerUnidadeCondominial(int index){
+        objeto.removerUnidadeCondominial(index);
+        Util.mensagemInformacao("Unidade Condominial removida com sucesso");
     }
             
     public void adicionarRecurso(){
@@ -76,6 +118,28 @@ public class ControleCondominio implements Serializable{
      */
     public void setObjeto(Condominio obj) {
         this.objeto = obj;
+    }
+    
+    public void verificaUnicidadeNomeCondominio(){
+        if(novo){
+            try{
+                if(!dao.verificaUnicidadeNomeCondominio(objeto.getNome())){
+                    Util.mensagemErro("Nome do Condomínio '" + objeto.getNome() + "' "
+                                + " já existe no banco de dados");
+                    objeto.setNome(null);
+                    // capturar o componente que chamou o método
+                    UIComponent comp
+                            = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+                    if(comp != null){
+                        // deixar vermelho após o update
+                        UIInput input = (UIInput) comp;
+                        input.setValid(false);
+                    }
+                }
+            }catch (Exception e){
+                Util.mensagemErro("Erro do sistema" + Util.getMensagemErro(e));
+            }
+        }
     }
     
     public String listar(){
@@ -131,6 +195,21 @@ public class ControleCondominio implements Serializable{
     public void setDaoRecurso(RecursoDAO<Recurso> daoRecurso) {
         this.daoRecurso = daoRecurso;
     }
+    
+    /**
+     * @return the daoPessoa
+     */
+    public PessoaDAO<Pessoa> getDaoPessoa() {
+        return daoPessoa;
+    }
+
+    /**
+     * @param daoPessoa the daoRecurso to set
+     */
+    public void setDaoPessoa(PessoaDAO<Pessoa> daoPessoa) {
+        this.daoPessoa = daoPessoa;
+    }
+    
 
     /**
      * @return the recurso
@@ -147,6 +226,20 @@ public class ControleCondominio implements Serializable{
     }
 
     /**
+     * @return the pessoa
+     */
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    /**
+     * @param pessoa the recurso to set
+     */
+    public void setRecurso(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+    
+    /**
      * @return the daoUnidadeCondominial
      */
     public UnidadeCondominialDAO<UnidadeCondominial> getDaoUnidadeCondominial() {
@@ -159,5 +252,34 @@ public class ControleCondominio implements Serializable{
     public void setDaoUnidadeCondominial(UnidadeCondominialDAO<UnidadeCondominial> daoUnidadeCondominial) {
         this.daoUnidadeCondominial = daoUnidadeCondominial;
     }
+
+    /**
+     * @return the novo
+     */
+    public Boolean getNovo() {
+        return novo;
+    }
+
+    /**
+     * @param novo the novo to set
+     */
+    public void setNovo(Boolean novo) {
+        this.novo = novo;
+    }
     
+    public UnidadeCondominial getUnidadeCondominial(){
+        return unidadeCondominial;
+    }
+    
+    public void setUnidadeCondominial(UnidadeCondominial unidadeCondominial){
+        this.unidadeCondominial = unidadeCondominial;
+    }
+    
+    public Boolean getNovaUnidadeCondominial(){
+        return novaUnidadeCondominial;
+    }
+    
+    public void setNovaUnidadeCondominial(Boolean novaUnidadeCondominial){
+        this.novaUnidadeCondominial = novaUnidadeCondominial;
+    }
 }

@@ -6,74 +6,99 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition template="/templates/template.xhtml">
-        <ui:define name="titulo">Manutenção de Recurso</ui:define>
+        <ui:define name="titulo">Manutenção de Alugueis</ui:define>
         <ui:define name="conteudo">
             <h:form id="formListagem" prependId="false">
                 <p:growl/>
                 <p:commandButton value="Novo"
-                                 actionListener="#{controleRecurso.novo()}"
+                                 actionListener="#{controleAluguel.novo()}"
                                  icon="pi pi-plus"
                                  process="@this"
-                                 oncomplete="PF('dlg').show();"/><div align="center">
+                                 oncomplete="PF('dlg').show();"/>
+                <p:commandButton value="Imprimir"
+                                 action="#{controleAluguel.imprimeAlugueis()}"
+                                 icon="pi pi-print"
+                                 ajax="false"
+                                 onclick="this.form.target = '_blank';"/>
+                <div align="center">
                     <p:panelGrid columns="11">
                         <p:outputLabel value="Ordem: "/>
-                        <p:selectOneMenu value="#{controleRecurso.dao.ordemAtual}" id="selectOrdem"
-                                         converter="#{controleRecurso.dao.converterOrdem}">
-                            <f:selectItems value="#{controleRecurso.dao.listaOrdem}"
+                        <p:selectOneMenu value="#{controleAluguel.dao.ordemAtual}" id="selectOrdem"
+                                         converter="#{controleAluguel.dao.converterOrdem}">
+                            <f:selectItems value="#{controleAluguel.dao.listaOrdem}"
                                            var="ord" itemValue="#{ord.atributo}"/>
                             <p:ajax update="listagem"/>
                         </p:selectOneMenu>
                         <p:outputLabel value="Filtro: "/>
-                        <p:inputText value="#{controleRecurso.dao.filtro}">
+                        <p:inputText value="#{controleAluguel.dao.filtro}">
                             <p:ajax update="listagem" event="blur"/>
                         </p:inputText>
                         <p:commandButton value="Filtrar" update="listagem"/>
                         <p:outputLabel value="Máximo de Objetos: "/>
-                        <p:selectOneMenu value="#{controleRecurso.dao.maximoObjetos}">
+                        <p:selectOneMenu value="#{controleAluguel.dao.maximoObjetos}">
                             <f:selectItem itemLabel="5" itemValue="5"/>
                             <f:selectItem itemLabel="10" itemValue="10"/>
                             <f:selectItem itemLabel="20" itemValue="20"/>
                             <f:selectItem itemLabel="50" itemValue="50"/>
                             <f:selectItem itemLabel="100" itemValue="100"/>
                         </p:selectOneMenu>
-                        <p:commandButton action="#{controleRecurso.dao.primeiro()}"
+                        <p:commandButton action="#{controleAluguel.dao.primeiro()}"
                                          title="Primeiro"
                                          icon="pi pi-step-backward"
                                          update="listagem"/>
-                        <p:commandButton action="#{controleRecurso.dao.anterior()}"
+                        <p:commandButton action="#{controleAluguel.dao.anterior()}"
                                          title="Anterior"
                                          icon="pi pi-chevron-left"
                                          update="listagem"/>
-                        <p:commandButton action="#{controleRecurso.dao.proximo()}"
+                        <p:commandButton action="#{controleAluguel.dao.proximo()}"
                                          title="Proximo"
                                          icon="pi pi-chevron-right"
                                          update="listagem"/>
-                        <p:commandButton action="#{controleRecurso.dao.ultimo()}"
+                        <p:commandButton action="#{controleAluguel.dao.ultimo()}"
                                          title="Ultimo"
                                          icon=""
                                          update="listagem"/>
                     </p:panelGrid>
                 </div>
-                <p:dataTable value="#{controleRecurso.dao.listaObjetos}" var="obj"
+                <p:dataTable value="#{controleAluguel.dao.listaObjetos}" var="obj"
                              id="listagem">
                     <f:facet name="footer">
-                        <p:outputLabel value="#{controleRecurso.dao.mensagemNavegacao}"/>
+                        <p:outputLabel value="#{controleAluguel.dao.mensagemNavegacao}"/>
                     </f:facet>
                     <p:column headerText="ID">
                         <p:outputLabel value="#{obj.id}"/>
                     </p:column>
-                    <p:column headerText="Descricao">
-                        <p:outputLabel value="#{obj.descricao}"/>
+                    <p:column headerText="Valor">
+                        <p:outputLabel value="#{obj.valor}"/>
+                    </p:column>
+                        <p:column headerText="Data de inicio de contrato">
+                        <p:outputLabel value="#{obj.inicioContrato}">
+                            <f:converter converterId="converterCalendar"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Data de fim de contrato">
+                        <p:outputLabel value="#{obj.fimContrato}">
+                            <f:converter converterId="converterCalendar"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="DiaVencimento">
+                        <p:outputLabel value="#{obj.diaVencimento}"/>
+                    </p:column>
+                    <p:column headerText="UnidadeCondominial">
+                        <p:outputLabel value="#{obj.unidadecondominial}"/>
+                    </p:column>
+                    <p:column headerText="Locatario">
+                        <p:outputLabel value="#{obj.locatario}"/>
                     </p:column>
                     <p:column headerText="Ações">
                         <div align="center">
-                            <p:commandButton actionListener="#{controleRecurso.alterar(obj.id)}"
+                            <p:commandButton actionListener="#{controleAluguel.alterar(obj.id)}"
                                              icon="pi pi-pencil"
                                              title="Editar"
                                              update="formEdicao"
                                              process="@this"
                                              oncomplete="PF('dlg').show();"/>
-                            <p:commandButton actionListener="#{controleRecurso.excluir(obj.id)}"
+                            <p:commandButton actionListener="#{controleAluguel.excluir(obj.id)}"
                                              icon="pi pi-trash"
                                              title="Excluir"
                                              update="formListagem"
@@ -82,33 +107,7 @@
                     </p:column>
                 </p:dataTable>
             </h:form>
-            <p:dialog header="Edição" widgetVar="dlg" resizable="false" 
-                      modal="modal" width="50%" height="100%">
-                <h:form id="formEdicao" prependId="false">
-                    <p:growl id="growl"/>
-                    <div align="center">
-                        <p:panelGrid columns="2">
-                            <p:outputLabel value="ID"/>
-                            <p:inputText value="#{controleRecurso.objeto.id}"
-                                         size="5" readonly="true"/>
-                            <p:outputLabel value="Descricao" for="txtDescricao"/>
-                            <p:inputText id="txtDescricao"
-                                         value="#{controleRecurso.objeto.descricao}"
-                                         size="50"
-                                         maxlength="50"
-                                         placeholder="Obrigatório"/>
-                        </p:panelGrid>
-                    </div>
-                    <p:panel>
-                        <div align="center">
-                            <p:commandButton value="Salvar" icon="pi pi-save"
-                                             actionListener="#{controleRecurso.salvar()}"
-                                             update="formEdicao formListagem"
-                                    oncomplete="if(!args.validationFailed){PF('dlg').hide();}"/>
-                        </div>
-                    </p:panel>
-                </h:form>
-            </p:dialog>
+            <ui:include src="formulario.xhtml"/>
         </ui:define>
     </ui:composition>
 </html>
